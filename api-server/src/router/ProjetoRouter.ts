@@ -50,6 +50,7 @@ export default class ProjetoRouter extends Router {
     const projeto = await ProjetoController.criarProjeto(
       body.nome,
       body.descricao,
+      // @ts-ignore
       req.usuario!.id_pessoa
     );
 
@@ -66,6 +67,7 @@ export default class ProjetoRouter extends Router {
       return res.status(400).json('ID inválido');
 
     const projeto = await ProjetoController.getProjetoByID(
+      // @ts-ignore
       req.usuario!.id_usuario,
       Number(id_projeto)
     );
@@ -83,6 +85,7 @@ export default class ProjetoRouter extends Router {
       return res.status(400).json('ID inválido');
 
     let projeto = await ProjetoController.getProjetoByID(
+      // @ts-ignore
       req.usuario!.id_usuario,
       Number(id_projeto)
     );
@@ -93,6 +96,7 @@ export default class ProjetoRouter extends Router {
         .json({ error: `Projeto ${id_projeto} não encontrado` });
 
     let projeto2 = await ProjetoController.atualizarColaboradoresProjeto(
+      // @ts-ignore
       req.usuario!.id_usuario,
       Number(id_projeto),
       [Number(id_pessoa)]

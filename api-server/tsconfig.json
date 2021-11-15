@@ -4,9 +4,9 @@
     "module": "commonjs",
     "rootDir": "./",
     "outDir": "./build",
-  
+
     "esModuleInterop": true,
-    "strict": false
+    "strict": true
   },
-  "include":["./custom.d.ts"],
+  "include": ["./custom.d.ts"]
 }

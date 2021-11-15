@@ -4,6 +4,7 @@ import TarefaController from '../controller/TarefaController';
 import asyncHandler from '../middleware/asyncHandler';
 import UsuarioController from '../controller/UsuarioController';
 import UsuarioRouter from './UsuarioRouter';
+import ProjetoController from '../controller/ProjetoController';
 
 export default class TarefaRouter extends Router {
   constructor(app: express.Application) {
@@ -19,6 +20,16 @@ export default class TarefaRouter extends Router {
       '/',
       asyncHandler(UsuarioRouter.checkLogin),
       asyncHandler(TarefaRouter.criarTarefa)
+    );
+    router.get(
+      '/:id_tarefa',
+      asyncHandler(UsuarioRouter.checkLogin),
+      asyncHandler(TarefaRouter.getTarefaById)
+    );
+    router.put(
+      '/:id_tarefa/colaborador/:id_pessoa',
+      asyncHandler(UsuarioRouter.checkLogin),
+      asyncHandler(TarefaRouter.adicionarColaboradorTarefa)
     );
     this.app.use('/tarefa', router);
   }
@@ -50,5 +61,36 @@ export default class TarefaRouter extends Router {
         .status(400)
         .json({ error: 'Ocorreu um erro ao criar a tarefa.' });
     return res.status(201).json({ data: projeto.get() });
+  }
+
+  static async getTarefaById(req: Request, res: Response) {
+    const id_tarefa = req.params.id_tarefa;
+    // @ts-ignore
+    const id_pessoa = req.usuario.id_pessoa;
+    if (typeof id_tarefa === 'undefined')
+      return res.status(400).json('ID inválido');
+
+    const tarefa = await TarefaController.getTarefaById(Number(id_tarefa));
+
+    if (tarefa === null)
+      return res
+        .status(404)
+        .json({ error: `Tarefa ${id_tarefa} não encontrada` });
+
+    if (tarefa.id_colaborador !== id_pessoa) {
+      const projeto = await ProjetoController.getProjetoByID(
+        id_pessoa,
+        tarefa.id_projeto
+      );
+      if (!projeto || projeto.gerenciador !== id_pessoa) {
+        return res.status(403).json();
+      }
+    }
+
+    return res.status(200).json({ data: tarefa.get() });
+  }
+
+  static async adicionarColaboradorTarefa(req: Request, res: Response) {
+    return res.status(500).json();
   }
 }

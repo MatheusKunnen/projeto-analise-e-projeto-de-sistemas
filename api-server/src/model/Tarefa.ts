@@ -4,7 +4,7 @@ import { DataTypes, Model, Optional } from 'sequelize';
 interface TarefaAttributes {
   id_tarefa: number;
   id_projeto: number;
-  id_colaborador: number;
+  id_colaborador: number | null;
   nome: string;
   descricao: string;
   concluida: boolean;

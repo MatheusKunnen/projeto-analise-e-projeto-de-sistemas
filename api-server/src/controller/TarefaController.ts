@@ -31,9 +31,27 @@ export default class TarefaController {
       await transaction.commit();
       return ltarefa;
     } catch (err) {
-      console.error(err);
       await transaction.rollback();
+      throw err;
     }
     return null;
+  }
+
+  static async getTarefaById(id_tarefa: number) {
+    return Tarefa.findOne({
+      where: { id_tarefa },
+    });
+  }
+
+  static async setColaboradorTarefa(
+    id_tarefa: number,
+    id_colaborador: number | null
+  ) {
+    const [rows, ...reg] = await Tarefa.update(
+      { id_colaborador },
+      { where: { id_tarefa } }
+    );
+
+    return rows;
   }
 }
