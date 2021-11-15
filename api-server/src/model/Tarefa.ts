@@ -14,7 +14,7 @@ interface TarefaAttributes {
 export interface TarefaInput
   extends Optional<
     TarefaAttributes,
-    'id_tarefa' | 'concluida' | 'observacao'
+    'id_tarefa' | 'concluida' | 'observacao' | 'id_projeto'
   > {}
 
 class Tarefa extends Model<TarefaAttributes, TarefaInput> {

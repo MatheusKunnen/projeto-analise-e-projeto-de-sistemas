@@ -4,8 +4,7 @@ export default class PessoaController {
   constructor() {}
 
   static init() {
-    Pessoa.sync();
-    Pessoa.build();
+    Pessoa.sync({ force: true });
   }
 
   static async registrarPessoa(nome: string, sobrenome: string, email: string) {

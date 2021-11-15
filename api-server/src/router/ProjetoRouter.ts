@@ -58,7 +58,11 @@ export default class ProjetoRouter extends Router {
       return res
         .status(400)
         .json({ error: 'Ocorreu um erro ao criar o projeto.' });
-    return res.status(201).json({ data: projeto.get() });
+
+    const colaboradores = await ProjetoController.getColaboradoresProjeto(
+      projeto.id_projeto
+    );
+    return res.status(201).json({ data: { ...projeto.get(), colaboradores } });
   }
 
   static async getProjetoById(req: Request, res: Response) {
@@ -76,7 +80,10 @@ export default class ProjetoRouter extends Router {
       return res
         .status(404)
         .json({ error: `Projeto ${id_projeto} não encontrado` });
-    return res.status(200).json({ data: projeto.get() });
+    const colaboradores = await ProjetoController.getColaboradoresProjeto(
+      projeto.id_projeto
+    );
+    return res.status(200).json({ data: { ...projeto.get(), colaboradores } });
   }
   static async adicionarColaborador(req: Request, res: Response) {
     const id_projeto = req.params.id_projeto;
@@ -95,13 +102,21 @@ export default class ProjetoRouter extends Router {
         .status(404)
         .json({ error: `Projeto ${id_projeto} não encontrado` });
 
-    let projeto2 = await ProjetoController.atualizarColaboradoresProjeto(
+    let projeto2 = await ProjetoController.adicionarColaboradorProjeto(
       // @ts-ignore
       req.usuario!.id_usuario,
       Number(id_projeto),
-      [Number(id_pessoa)]
+      Number(id_pessoa)
     );
     if (projeto2 === null) return res.status(500).json();
-    return res.status(200).json({ data: projeto2 });
+    const colaboradores = await ProjetoController.getColaboradoresProjeto(
+      projeto2.id_projeto
+    );
+    return res.status(200).json({
+      data: {
+        ...projeto2.get(),
+        colaboradores,
+      },
+    });
   }
 }

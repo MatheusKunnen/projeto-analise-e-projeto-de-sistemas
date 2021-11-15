@@ -16,11 +16,16 @@ export default class TarefaRouter extends Router {
     TarefaController.init();
     // Inicia rutas
     const router = express.Router();
-    router.post(
-      '/',
-      asyncHandler(UsuarioRouter.checkLogin),
-      asyncHandler(TarefaRouter.criarTarefa)
-    );
+    router
+      .route('/')
+      .post(
+        asyncHandler(UsuarioRouter.checkLogin),
+        asyncHandler(TarefaRouter.criarTarefa)
+      )
+      .get(
+        asyncHandler(UsuarioRouter.checkLogin),
+        asyncHandler(TarefaRouter.getTarefasAssociadas)
+      );
     router.get(
       '/:id_tarefa',
       asyncHandler(UsuarioRouter.checkLogin),
@@ -61,6 +66,15 @@ export default class TarefaRouter extends Router {
         .status(400)
         .json({ error: 'Ocorreu um erro ao criar a tarefa.' });
     return res.status(201).json({ data: projeto.get() });
+  }
+
+  static async getTarefasAssociadas(req: Request, res: Response) {
+    // @ts-ignore
+    const id_pessoa: number = req.usuario.id_pessoa;
+
+    const tarefa = await TarefaController.getTarefasPessoa(id_pessoa);
+
+    return res.status(200).json({ data: tarefa });
   }
 
   static async getTarefaById(req: Request, res: Response) {

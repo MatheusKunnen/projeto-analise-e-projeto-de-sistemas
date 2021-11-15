@@ -1,5 +1,6 @@
 import BancoDeDados from '../BancoDeDados';
 import { DataTypes, Model, Optional } from 'sequelize';
+import Projeto from './Projeto';
 
 interface PessoaAttributes {
   id_pessoa: number;

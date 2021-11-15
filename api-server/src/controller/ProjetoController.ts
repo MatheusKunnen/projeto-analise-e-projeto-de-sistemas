@@ -1,3 +1,4 @@
+import ColaboradorProjeto from '../model/ColaboradorProjeto';
 import Pessoa from '../model/Pessoa';
 import Projeto from '../model/Projeto';
 
@@ -5,8 +6,8 @@ export default class ProjetoController {
   constructor() {}
 
   static init() {
-    Projeto.sync();
-    Projeto.build();
+    Projeto.sync({ force: true });
+    ColaboradorProjeto.sync({ force: true });
   }
 
   static async criarProjeto(
@@ -20,20 +21,36 @@ export default class ProjetoController {
   static async getProjetoByID(gerenciador: number, id_projeto: number) {
     return Projeto.findOne({
       where: { id_projeto },
-      include: [Projeto.Colaborador, Projeto.Tarefa],
+      include: [Projeto.Tarefa],
     });
   }
 
-  static async atualizarColaboradoresProjeto(
+  static async adicionarColaboradorProjeto(
     gerenciador: number,
     id_projeto: number,
-    colaboradores: number[]
+    colaborador: number
   ) {
-    console.log(colaboradores);
     let projeto = await Projeto.findOne({ where: { id_projeto, gerenciador } });
     if (projeto === null) return null;
-    //@ts-ignore
-    await projeto.addColaboradores(colaboradores);
+    await ColaboradorProjeto.create({ id_projeto, id_pessoa: colaborador });
     return ProjetoController.getProjetoByID(gerenciador, id_projeto);
+  }
+
+  static async getColaboradoresProjeto(id_projeto: number) {
+    const colaboradores_id = await ColaboradorProjeto.findAll({
+      where: { id_projeto },
+    });
+
+    const colaboradores = await Promise.all(
+      colaboradores_id.map(async ({ id_pessoa }) =>
+        Pessoa.findOne({ where: { id_pessoa } })
+      )
+    );
+
+    console.log(colaboradores);
+
+    return colaboradores
+      .filter((c) => c !== null)
+      .map((colaborador) => colaborador!.get());
   }
 }

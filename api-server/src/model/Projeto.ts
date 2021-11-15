@@ -1,6 +1,5 @@
 import BancoDeDados from '../BancoDeDados';
 import { DataTypes, Model, Optional } from 'sequelize';
-import Pessoa from './Pessoa';
 import Tarefa from './Tarefa';
 
 interface ProjetoAttributes {
@@ -58,6 +57,9 @@ Projeto.init(
     modelName: 'projeto',
   }
 );
-Projeto.Colaborador = Projeto.hasMany(Pessoa, { as: 'colaboradores' });
-Projeto.Tarefa = Projeto.hasMany(Tarefa, { as: 'tarefas' });
+
+Projeto.Tarefa = Projeto.hasMany(Tarefa, {
+  as: 'tarefas',
+  foreignKey: { name: 'id_projeto' },
+});
 export default Projeto;

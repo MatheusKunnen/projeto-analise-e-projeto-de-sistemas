@@ -6,8 +6,7 @@ export default class TarefaController {
   constructor() {}
 
   static init() {
-    Tarefa.sync();
-    Tarefa.build();
+    Tarefa.sync({ force: true });
   }
 
   static async criarTarefa(
@@ -35,6 +34,12 @@ export default class TarefaController {
       throw err;
     }
     return null;
+  }
+
+  static async getTarefasPessoa(id_colaborador: number) {
+    return Tarefa.findAll({
+      where: { id_colaborador },
+    });
   }
 
   static async getTarefaById(id_tarefa: number) {
