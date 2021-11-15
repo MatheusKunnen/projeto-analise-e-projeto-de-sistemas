@@ -8,5 +8,6 @@
     "esModuleInterop": true,
     "strict": true
   },
-  "include": ["./custom.d.ts"]
+  "include": ["./customTypes.ts"],
+  "exclude": ["build"]
 }
