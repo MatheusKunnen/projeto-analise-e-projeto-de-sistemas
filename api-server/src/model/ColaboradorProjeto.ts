@@ -37,6 +37,7 @@ ColaboradorProjeto.init(
   {
     sequelize: BancoDeDados.getInstance().getDbInstance(),
     modelName: 'colaborador_projeto',
+    indexes: [{ unique: true, fields: ['id_pessoa', 'id_projeto'] }],
   }
 );
 

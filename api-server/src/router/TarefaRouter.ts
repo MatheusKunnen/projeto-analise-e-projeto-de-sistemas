@@ -97,10 +97,7 @@ export default class TarefaRouter extends Router {
         .json({ error: `Tarefa ${id_tarefa} não encontrada` });
 
     if (tarefa.id_colaborador !== id_pessoa) {
-      const projeto = await ProjetoController.getProjetoByID(
-        id_pessoa,
-        tarefa.id_projeto
-      );
+      const projeto = await ProjetoController.getProjetoByID(tarefa.id_projeto);
       if (!projeto || projeto.gerenciador !== id_pessoa) {
         return res.status(403).json();
       }
@@ -124,10 +121,7 @@ export default class TarefaRouter extends Router {
         .json({ error: `Tarefa ${id_tarefa} não encontrada` });
 
     if (tarefa.id_colaborador !== id_pessoa) {
-      const projeto = await ProjetoController.getProjetoByID(
-        id_pessoa,
-        tarefa.id_projeto
-      );
+      const projeto = await ProjetoController.getProjetoByID(tarefa.id_projeto);
       if (!projeto || projeto.gerenciador !== id_pessoa) {
         return res.status(403).json();
       }
@@ -171,10 +165,8 @@ export default class TarefaRouter extends Router {
         .status(404)
         .json({ error: `Tarefa ${id_tarefa} não encontrada` });
 
-    const projeto = await ProjetoController.getProjetoByID(
-      id_pessoa,
-      tarefa.id_projeto
-    );
+    const projeto = await ProjetoController.getProjetoByID(tarefa.id_projeto);
+
     if (!projeto || projeto.gerenciador !== id_pessoa) {
       return res.status(403).json();
     }
