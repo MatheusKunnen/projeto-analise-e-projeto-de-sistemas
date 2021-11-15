@@ -6,7 +6,7 @@ export default class TarefaController {
   constructor() {}
 
   static init() {
-    Tarefa.sync({ force: true });
+    Tarefa.sync({ force: false });
   }
 
   static async criarTarefa(
@@ -33,7 +33,6 @@ export default class TarefaController {
       await transaction.rollback();
       throw err;
     }
-    return null;
   }
 
   static async getTarefasPessoa(id_colaborador: number) {
@@ -57,6 +56,21 @@ export default class TarefaController {
       { where: { id_tarefa } }
     );
 
+    return rows;
+  }
+
+  static async updateTarefa(
+    id_tarefa: number,
+    id_colaborador?: number,
+    nome?: string,
+    descricao?: string,
+    concluida?: boolean,
+    observacao?: string
+  ) {
+    const [rows, ...r] = await Tarefa.update(
+      { id_tarefa, id_colaborador, nome, descricao, concluida, observacao },
+      { where: { id_tarefa } }
+    );
     return rows;
   }
 }

@@ -32,8 +32,11 @@ export default class Main {
         res: express.Response,
         next: Function
       ) => {
+        //console.log(err.name);
         if (err.name === 'SequelizeUniqueConstraintError') {
           return res.status(400).json({ error: 'Objeto já existente' });
+        } else if (err.name === 'SyntaxError') {
+          return res.status(400).json({ error: 'Formato inválido' });
         } else {
           console.error(err);
           return res.status(500).json({});

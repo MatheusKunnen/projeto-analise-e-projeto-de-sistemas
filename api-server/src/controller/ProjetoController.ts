@@ -6,8 +6,8 @@ export default class ProjetoController {
   constructor() {}
 
   static init() {
-    Projeto.sync({ force: true });
-    ColaboradorProjeto.sync({ force: true });
+    Projeto.sync({ force: false });
+    ColaboradorProjeto.sync({ force: false });
   }
 
   static async criarProjeto(
@@ -46,8 +46,6 @@ export default class ProjetoController {
         Pessoa.findOne({ where: { id_pessoa } })
       )
     );
-
-    console.log(colaboradores);
 
     return colaboradores
       .filter((c) => c !== null)

@@ -4,7 +4,7 @@ export default class UsuarioController {
   constructor() {}
 
   static init() {
-    Usuario.sync({ force: true });
+    Usuario.sync({ force: false });
   }
   static async registrarUsuario(
     alias: string,

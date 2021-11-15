@@ -26,11 +26,16 @@ export default class TarefaRouter extends Router {
         asyncHandler(UsuarioRouter.checkLogin),
         asyncHandler(TarefaRouter.getTarefasAssociadas)
       );
-    router.get(
-      '/:id_tarefa',
-      asyncHandler(UsuarioRouter.checkLogin),
-      asyncHandler(TarefaRouter.getTarefaById)
-    );
+    router
+      .route('/:id_tarefa')
+      .get(
+        asyncHandler(UsuarioRouter.checkLogin),
+        asyncHandler(TarefaRouter.getTarefaById)
+      )
+      .put(
+        asyncHandler(UsuarioRouter.checkLogin),
+        asyncHandler(TarefaRouter.updateTarefa)
+      );
     router.put(
       '/:id_tarefa/colaborador/:id_pessoa',
       asyncHandler(UsuarioRouter.checkLogin),
@@ -104,7 +109,87 @@ export default class TarefaRouter extends Router {
     return res.status(200).json({ data: tarefa.get() });
   }
 
+  static async updateTarefa(req: Request, res: Response) {
+    const id_tarefa = req.params.id_tarefa;
+    // @ts-ignore
+    const id_pessoa = req.usuario.id_pessoa;
+    if (typeof id_tarefa === 'undefined')
+      return res.status(400).json('ID inválido');
+
+    let tarefa = await TarefaController.getTarefaById(Number(id_tarefa));
+
+    if (tarefa === null)
+      return res
+        .status(404)
+        .json({ error: `Tarefa ${id_tarefa} não encontrada` });
+
+    if (tarefa.id_colaborador !== id_pessoa) {
+      const projeto = await ProjetoController.getProjetoByID(
+        id_pessoa,
+        tarefa.id_projeto
+      );
+      if (!projeto || projeto.gerenciador !== id_pessoa) {
+        return res.status(403).json();
+      }
+    } else {
+      req.body.id_colaborador = undefined;
+    }
+
+    const rows = await TarefaController.updateTarefa(
+      Number(id_tarefa),
+      req.body.id_colaborador,
+      req.body.nome,
+      req.body.descricao,
+      req.body.concluida,
+      req.body.observacao
+    );
+    if (rows <= 0)
+      return res
+        .status(400)
+        .json({ error: 'Não foi possível atualizar a tarefa' });
+
+    tarefa = await TarefaController.getTarefaById(Number(id_tarefa));
+
+    return res.status(200).json({ data: tarefa });
+  }
+
   static async adicionarColaboradorTarefa(req: Request, res: Response) {
-    return res.status(500).json();
+    const id_tarefa = req.params.id_tarefa;
+    const id_colaborador = req.params.id_colaborador;
+    // @ts-ignore
+    const id_pessoa = req.usuario.id_pessoa;
+    if (
+      typeof id_tarefa === 'undefined' ||
+      typeof id_colaborador === 'undefined'
+    )
+      return res.status(400).json('ID inválido');
+
+    let tarefa = await TarefaController.getTarefaById(Number(id_tarefa));
+
+    if (tarefa === null)
+      return res
+        .status(404)
+        .json({ error: `Tarefa ${id_tarefa} não encontrada` });
+
+    const projeto = await ProjetoController.getProjetoByID(
+      id_pessoa,
+      tarefa.id_projeto
+    );
+    if (!projeto || projeto.gerenciador !== id_pessoa) {
+      return res.status(403).json();
+    }
+
+    const rows = await TarefaController.updateTarefa(
+      Number(id_tarefa),
+      Number(id_colaborador)
+    );
+    if (rows <= 0)
+      return res
+        .status(400)
+        .json({ error: 'Não foi possível atualizar a tarefa' });
+
+    tarefa = await TarefaController.getTarefaById(Number(id_tarefa));
+
+    return res.status(200).json({ data: tarefa });
   }
 }
