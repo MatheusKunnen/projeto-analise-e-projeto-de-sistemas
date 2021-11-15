@@ -1,6 +1,8 @@
 import express from 'express';
 import morgan from 'morgan';
 import PessoaRouter from './router/PessoaRouter';
+import ProjetoRouter from './router/ProjetoRouter';
+import TarefaRouter from './router/TarefaRouter';
 import UsuarioRouter from './router/UsuarioRouter';
 import BancoDeDados from './BancoDeDados';
 
@@ -47,6 +49,6 @@ export default class Main {
   }
 
   static getDefaultRoutes() {
-    return [UsuarioRouter, PessoaRouter];
+    return [PessoaRouter, ProjetoRouter, PessoaRouter, UsuarioRouter];
   }
 }

@@ -76,7 +76,6 @@ export default class UsuarioRouter extends Router {
   }
 
   static async checkLogin(req: Request, res: Response, next: Function) {
-    console.log(req.headers.authorization);
     // Verifica se existe o header
     if (typeof req.headers.authorization === 'undefined') {
       return res.status(401).json();
