@@ -19,6 +19,16 @@ export default class ProjetoRouter extends Router {
       UsuarioRouter.checkLogin,
       asyncHandler(ProjetoRouter.criarProjeto)
     );
+    router.get(
+      '/:id_projeto',
+      UsuarioRouter.checkLogin,
+      asyncHandler(ProjetoRouter.getProjetoById)
+    );
+    router.put(
+      '/:id_projeto/add_colaborador/:id_pessoa',
+      UsuarioRouter.checkLogin,
+      asyncHandler(ProjetoRouter.adicionarColaborador)
+    );
     this.app.use('/projeto', router);
   }
 
@@ -48,5 +58,46 @@ export default class ProjetoRouter extends Router {
         .status(400)
         .json({ error: 'Ocorreu um erro ao criar o projeto.' });
     return res.status(201).json({ data: projeto.get() });
+  }
+
+  static async getProjetoById(req: Request, res: Response) {
+    const id_projeto = req.params.id_projeto;
+    if (typeof id_projeto === 'undefined')
+      return res.status(400).json('ID inválido');
+
+    const projeto = await ProjetoController.getProjetoByID(
+      req.usuario!.id_usuario,
+      Number(id_projeto)
+    );
+
+    if (projeto === null)
+      return res
+        .status(404)
+        .json({ error: `Projeto ${id_projeto} não encontrado` });
+    return res.status(200).json({ data: projeto.get() });
+  }
+  static async adicionarColaborador(req: Request, res: Response) {
+    const id_projeto = req.params.id_projeto;
+    const id_pessoa = req.params.id_pessoa;
+    if (typeof id_projeto === 'undefined' || typeof id_pessoa === 'undefined')
+      return res.status(400).json('ID inválido');
+
+    let projeto = await ProjetoController.getProjetoByID(
+      req.usuario!.id_usuario,
+      Number(id_projeto)
+    );
+
+    if (projeto === null)
+      return res
+        .status(404)
+        .json({ error: `Projeto ${id_projeto} não encontrado` });
+
+    let projeto2 = await ProjetoController.atualizarColaboradoresProjeto(
+      req.usuario!.id_usuario,
+      Number(id_projeto),
+      [Number(id_pessoa)]
+    );
+    if (projeto2 === null) return res.status(500).json();
+    return res.status(200).json({ data: projeto2 });
   }
 }

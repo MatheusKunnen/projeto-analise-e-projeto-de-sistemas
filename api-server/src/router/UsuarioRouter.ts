@@ -48,7 +48,7 @@ export default class UsuarioRouter extends Router {
       console.error(
         'ERROR::UsuarioRouter::registrarUsuario:: não foi possível criar a pessoa associada ao usuario'
       );
-      res.status(500);
+      res.status(500).json();
     }
     // Cria o usuario
     const usuario = await UsuarioController.registrarUsuario(
@@ -60,7 +60,7 @@ export default class UsuarioRouter extends Router {
       console.error(
         'ERROR::UsuarioRouter::registrarUsuario:: não foi possível registrar o usuario'
       );
-      res.status(500);
+      res.status(500).json();
     }
     return res.status(201).json({ ...usuario.get(), pessoa, senha: undefined });
   }

@@ -20,8 +20,10 @@ class Projeto extends Model<ProjetoAttributes, ProjetoInput> {
   public descrição!: string;
   public gerenciador!: number;
   public concluido!: boolean;
-  public colaboradores!: number[];
+
   public readonly createdAt!: Date;
+  static Colaborador: any;
+  static Tarefa: any;
 }
 
 Projeto.init(
@@ -56,8 +58,6 @@ Projeto.init(
     modelName: 'projeto',
   }
 );
-
-Projeto.hasMany(Pessoa, { as: 'colaboradores' });
-Projeto.hasMany(Tarefa, { as: 'tarefas' });
-
+Projeto.Colaborador = Projeto.hasMany(Pessoa, { as: 'colaboradores' });
+Projeto.Tarefa = Projeto.hasMany(Tarefa, { as: 'tarefas' });
 export default Projeto;

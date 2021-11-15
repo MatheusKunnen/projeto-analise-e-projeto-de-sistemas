@@ -49,6 +49,6 @@ export default class Main {
   }
 
   static getDefaultRoutes() {
-    return [PessoaRouter, ProjetoRouter, PessoaRouter, UsuarioRouter];
+    return [PessoaRouter, ProjetoRouter, TarefaRouter, UsuarioRouter];
   }
 }
