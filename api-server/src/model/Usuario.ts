@@ -1,23 +1,35 @@
 import BancoDeDados from '../BancoDeDados';
 import { DataTypes, Model, Optional } from 'sequelize';
+import { createHash } from 'crypto';
 
 interface UsuarioAttributes {
   id_usuario: number;
   alias: string;
   senha: string;
   ativo: boolean;
+  id_pessoa: number;
   createdAt?: Date;
 }
 export interface UsuarioInput
   extends Optional<UsuarioAttributes, 'id_usuario' | 'ativo'> {}
-// export interface UsuariotOuput extends Required<UsuarioAttributes> {}
 
 class Usuario extends Model<UsuarioAttributes, UsuarioInput> {
   public id_usuario!: number;
   public alias!: string;
   public senha!: string;
   public ativo!: boolean;
+  public id_pessoa!: number;
   public readonly createdAt!: Date;
+
+  async validateSenha(senha: string) {
+    return Usuario.getHashSenha(this.alias, senha) === this.senha;
+  }
+
+  static getHashSenha(alias: string, senha: string) {
+    return createHash('sha512')
+      .update(alias + senha)
+      .digest('hex');
+  }
 }
 
 Usuario.init(
@@ -30,6 +42,7 @@ Usuario.init(
     alias: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
     },
     senha: {
       type: DataTypes.STRING,
@@ -40,10 +53,16 @@ Usuario.init(
       allowNull: false,
       defaultValue: true,
     },
+    id_pessoa: {
+      type: DataTypes.INTEGER,
+      references: { model: 'pessoas', key: 'id_pessoa' },
+      allowNull: false,
+    },
   },
   {
     timestamps: true,
     sequelize: BancoDeDados.getInstance().getDbInstance(),
+    modelName: 'usuario',
   }
 );
 

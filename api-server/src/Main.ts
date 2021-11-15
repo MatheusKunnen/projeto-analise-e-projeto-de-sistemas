@@ -1,5 +1,6 @@
 import express from 'express';
 import morgan from 'morgan';
+import PessoaRouter from './router/PessoaRouter';
 import UsuarioRouter from './router/UsuarioRouter';
 import BancoDeDados from './BancoDeDados';
 
@@ -13,6 +14,7 @@ export default class Main {
     // Inicia App Express
     this.app = express();
     this.app.use(morgan('dev'));
+    this.app.use(express.json());
     // Inicia Banco de Dados
     this.db = BancoDeDados.getInstance(process.env.DB_STORAGE || './db.sqlite');
     // Inicia Rutas
@@ -20,6 +22,22 @@ export default class Main {
       const rute = new ruta(this.app);
       rute.initRouter();
     });
+    // Adicionar gerenciador de erros não tratados
+    this.app.use(
+      (
+        err: any,
+        req: express.Request,
+        res: express.Response,
+        next: Function
+      ) => {
+        if (err.name === 'SequelizeUniqueConstraintError') {
+          return res.status(400).json({ error: 'Objeto já existente' });
+        } else {
+          console.error(err);
+          return res.status(500).json({});
+        }
+      }
+    );
   }
 
   start() {
@@ -29,6 +47,6 @@ export default class Main {
   }
 
   static getDefaultRoutes() {
-    return [UsuarioRouter];
+    return [UsuarioRouter, PessoaRouter];
   }
 }
