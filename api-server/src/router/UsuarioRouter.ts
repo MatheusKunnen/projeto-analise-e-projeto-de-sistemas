@@ -85,7 +85,7 @@ export default class UsuarioRouter extends Router {
     const [alias, senha] = Buffer.from(b64auth, 'base64').toString().split(':');
     // Valida alias e senha com o banco de dados
     const usuario = await UsuarioController.getUsuarioAlias(alias, senha);
-    if (usuario === null) return res.status(401);
+    if (usuario === null) return res.status(401).json();
     req.usuario! = usuario;
     next();
   }
