@@ -17,10 +17,14 @@ class UserService {
     }
   }
 
-  async login(id: string) {
+  async login(username:string, password:string) {
     try {
-        const response = await api.get(`/usuario/me`);
-        // Autenticação Basic - username, password.
+        const response = await api.get(`/usuario/me`, {
+          auth: {
+            username,
+            password
+          }
+        });
         return response.data;
     } catch (error) {
         console.log('Erro ao fazer login', error);
