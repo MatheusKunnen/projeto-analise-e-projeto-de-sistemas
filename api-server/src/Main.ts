@@ -5,7 +5,7 @@ import ProjetoRouter from './router/ProjetoRouter';
 import TarefaRouter from './router/TarefaRouter';
 import UsuarioRouter from './router/UsuarioRouter';
 import BancoDeDados from './BancoDeDados';
-
+import cors from 'cors';
 export default class Main {
   app: express.Application;
   db: BancoDeDados;
@@ -15,6 +15,7 @@ export default class Main {
   constructor() {
     // Inicia App Express
     this.app = express();
+    this.app.use(cors());
     this.app.use(morgan('dev'));
     this.app.use(express.json());
     // Inicia Banco de Dados
