@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container } from './styles';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../hooks/auth'
+import AddCollaborator from './AddCollaborator';
 
 import ProjectService from '../../services/ProjectService';
 
@@ -34,8 +35,13 @@ interface ProjectProps {
 const Project: React.FC = () => {
   const [project, setProject] = useState<ProjectProps>();
   const [tasks, setTasks] = useState<TaskProps[]>([]);
+
+  const [addCollaboratorModalOpen, setAddCollaboratorModalOpen] = useState(true);
+  const handleOpenModal = () => setAddCollaboratorModalOpen(true);
+
   let { id } = useParams();
   const { user } = useAuth();
+
 
   useEffect(() => {
     user && updateProject();
@@ -66,13 +72,20 @@ const Project: React.FC = () => {
 
   return (
     <Container>
+      <AddCollaborator 
+        open={addCollaboratorModalOpen} 
+        setOpen={setAddCollaboratorModalOpen} 
+        projectId={project?.id_projeto ? project.id_projeto : -1}
+        collaborators={project?.colaboradores ? project?.colaboradores : []}
+        callback={updateProject}
+      />
       <h1>{project?.nome}</h1>
       <h2>{project?.descricao}</h2>
 
       {user?.person_id === project?.gerenciador &&
       <>
         <h4>Você é o gerenciador</h4>
-        <button>Adicionar colaboradores</button>
+        <button onClick={handleOpenModal}>Adicionar colaboradores</button>
         <button>Criar tarefas</button>
         <button>Associar tarefas aos colaboradores</button>
       </>
