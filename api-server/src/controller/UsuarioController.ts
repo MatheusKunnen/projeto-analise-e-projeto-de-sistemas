@@ -25,8 +25,7 @@ export default class UsuarioController {
         ativo: true,
       },
     });
-
-    if (usuario === null || !usuario.validateSenha(senha)) return null;
+    if (usuario === null || !(await usuario.validateSenha(senha))) return null;
     return usuario;
   }
 }
