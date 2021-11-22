@@ -57,7 +57,7 @@ export const AuthProvider:React.FC = ({ children }) =>  {
         const response: UserResponse = await UserService.login(username, password);
         if(!response.id_usuario) return false;
         
-        const loggedIn = await PersonService.get(username, password, response.id_pessoa)
+        const loggedIn = await PersonService.get(response.id_pessoa)
             .then((res: PersonResponse) => {
                 const temporaryUser = {
                     user_id: response.id_usuario,

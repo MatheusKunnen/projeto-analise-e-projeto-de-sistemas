@@ -57,7 +57,7 @@ export default function SignIn() {
         console.log(err);
         alert('Erro ao fazer login');
     });
-  }, [username, password]);
+  }, [username, password, signIn, navigate]);
 
   return (
     <Container component="main" maxWidth="xs">

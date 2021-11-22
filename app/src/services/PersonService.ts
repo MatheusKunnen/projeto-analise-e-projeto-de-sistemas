@@ -1,9 +1,8 @@
 import api from './api';
 
 class PersonService {
-  async get(username:string, password:string, person_id:number) {
+  async get(person_id:number) {
     try {
-        // Autenticação Basic - username, password.
         const response = await api.get(`/pessoa/${person_id}`);
         return response.data.data;
     } catch (error) {
@@ -12,9 +11,8 @@ class PersonService {
     }
   }
 
-  async all(username:string, password:string) {
+  async all() {
     try {
-        // Autenticação Basic - username, password.
         const response = await api.get(`/pessoa`);
         return response.data.data;
     } catch (error) {

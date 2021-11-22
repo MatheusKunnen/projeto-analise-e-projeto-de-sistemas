@@ -1,20 +1,47 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Container, NewProjectContainer } from './styles';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import {  Link } from "react-router-dom";
+import { useAuth } from '../../hooks/auth'
 
 import ProjectService from '../../services/ProjectService';
 
+interface ProjectProps {
+  id_projeto: number;
+  nome: string;
+  descricao: string;
+}
+
 const Home: React.FC = () => {
+  const { user } = useAuth();
+
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [projects, setProjects] = useState<ProjectProps[]>([]);
 
+  useEffect(() => {
+    user && updateProjects();
+  }, [user])
+
+  const updateProjects = () => {
+    ProjectService.all()
+      .then(res => {
+        setProjects(res);
+      })
+      .catch(err => {
+        console.log(err);
+      })
+  }
+  
   const onCreateProject = useCallback(async (event) => {
     event.preventDefault();
-    console.log(name, description);
-    ProjectService.create('username', 'password', name, description)
+    ProjectService.create(name, description)
     .then(res => {
-      console.log(res);
+      const proj = projects;
+      proj.push({nome: res.nome, descricao: res.descricao, id_projeto: res.id_projeto});
+      setProjects(proj);
+
       setName('');
       setDescription('');
       alert('Projeto criado com sucesso');
@@ -23,7 +50,7 @@ const Home: React.FC = () => {
       alert('Erro ao criar projeto');
       console.log(err);
     });
-  }, [name, description]);
+  }, [name, description, projects]);
 
   return (
     <Container>
@@ -32,18 +59,17 @@ const Home: React.FC = () => {
         <TextField
           variant="outlined"
           margin="normal"
-          required
           fullWidth
           name="name"
           label="Nome do projeto"
           type="name"
           style={{margin: 0, marginRight: 40}}
           onChange={(event) => setName(event.target.value)}
+          value={name}
         />
         <TextField
           variant="outlined"
           margin="normal"
-          required
           fullWidth
           name="description"
           label="Descrição do projeto"
@@ -53,6 +79,7 @@ const Home: React.FC = () => {
           maxRows={1}
           style={{margin: 0, marginRight: 40}}
           onChange={(event) => setDescription(event.target.value)}
+          value={description}
         />
         <Button
           type="submit"
@@ -66,6 +93,12 @@ const Home: React.FC = () => {
         </Button>
       </NewProjectContainer>
       <h1>Meus projetos</h1>
+      {projects.map(project => {
+        return(
+          // to-do: add project card
+          <Link to={`/projeto/${project.id_projeto}`} key={project.id_projeto}>{project.nome}, {project.descricao}</Link>
+        )
+      })}
     </Container>
   );
 };
