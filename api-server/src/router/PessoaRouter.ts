@@ -2,7 +2,6 @@ import express, { Request, Response } from 'express';
 import Router from './Router';
 import PessoaController from '../controller/PessoaController';
 import asyncHandler from '../middleware/asyncHandler';
-import Pessoa from '../model/Pessoa';
 import UsuarioRouter from './UsuarioRouter';
 
 export default class PessoaRouter extends Router {

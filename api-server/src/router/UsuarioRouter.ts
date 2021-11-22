@@ -48,7 +48,7 @@ export default class UsuarioRouter extends Router {
       console.error(
         'ERROR::UsuarioRouter::registrarUsuario:: não foi possível criar a pessoa associada ao usuario'
       );
-      res.status(500).json();
+      res.status(500).json({ error: 'Erro inesperado' });
     }
     // Cria o usuario
     const usuario = await UsuarioController.registrarUsuario(
@@ -60,7 +60,7 @@ export default class UsuarioRouter extends Router {
       console.error(
         'ERROR::UsuarioRouter::registrarUsuario:: não foi possível registrar o usuario'
       );
-      res.status(500).json();
+      res.status(500).json({ error: 'Erro inesperado' });
     }
     return res.status(201).json({ ...usuario.get(), pessoa, senha: undefined });
   }
@@ -71,7 +71,7 @@ export default class UsuarioRouter extends Router {
         .status(200)
         .json({ data: { ...req.usuario.get(), senha: undefined } });
     } else {
-      return res.status(404).json();
+      return res.status(404).json({ error: 'Não encontrado' });
     }
   }
 
@@ -85,7 +85,9 @@ export default class UsuarioRouter extends Router {
     const [alias, senha] = Buffer.from(b64auth, 'base64').toString().split(':');
     // Valida alias e senha com o banco de dados
     const usuario = await UsuarioController.getUsuarioAlias(alias, senha);
-    if (usuario === null) return res.status(401).json();
+    console.log(usuario);
+    if (usuario === null)
+      return res.status(401).json({ error: 'Usuário ou Senha inválida.' });
     req.usuario! = usuario;
     next();
   }

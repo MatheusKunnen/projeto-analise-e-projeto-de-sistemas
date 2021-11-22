@@ -40,7 +40,7 @@ export default class Main {
           return res.status(400).json({ error: 'Formato inválido' });
         } else {
           console.error(err);
-          return res.status(500).json({});
+          return res.status(500).json({ error: 'Erro inesperado' });
         }
       }
     );

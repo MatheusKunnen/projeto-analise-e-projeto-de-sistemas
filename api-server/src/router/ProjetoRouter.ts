@@ -3,7 +3,6 @@ import Router from './Router';
 import ProjetoController from '../controller/ProjetoController';
 import UsuarioRouter from './UsuarioRouter';
 import asyncHandler from '../middleware/asyncHandler';
-import Projeto from '../model/Projeto';
 
 export default class ProjetoRouter extends Router {
   constructor(app: express.Application) {
@@ -102,7 +101,8 @@ export default class ProjetoRouter extends Router {
       colaboradores.map(({ id_pessoa }) => {
         if (id_pessoa === id_usuario) colaborador = true;
       });
-      if (!colaborador) return res.status(403).json();
+      if (!colaborador)
+        return res.status(403).json({ error: 'Acesso restringido' });
     }
 
     return res.status(200).json({ data: { ...projeto.get(), colaboradores } });
@@ -123,14 +123,15 @@ export default class ProjetoRouter extends Router {
         .json({ error: `Projeto ${id_projeto} não encontrado` });
 
     if (projeto.gerenciador !== id_pessoa_auth) {
-      return res.status(403).json();
+      return res.status(403).json({ error: 'Acesso restringido' });
     }
     let projeto2 = await ProjetoController.adicionarColaboradorProjeto(
       Number(id_projeto),
       Number(id_pessoa)
     );
 
-    if (projeto2 === null) return res.status(500).json();
+    if (projeto2 === null)
+      return res.status(500).json({ error: 'Erro inesperado' });
     const colaboradores = await ProjetoController.getColaboradoresProjeto(
       projeto2.id_projeto
     );

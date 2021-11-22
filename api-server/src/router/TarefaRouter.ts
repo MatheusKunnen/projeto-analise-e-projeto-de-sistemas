@@ -99,7 +99,7 @@ export default class TarefaRouter extends Router {
     if (tarefa.id_colaborador !== id_pessoa) {
       const projeto = await ProjetoController.getProjetoByID(tarefa.id_projeto);
       if (!projeto || projeto.gerenciador !== id_pessoa) {
-        return res.status(403).json();
+        return res.status(403).json({ error: 'Acesso restringido' });
       }
     }
 
@@ -123,7 +123,7 @@ export default class TarefaRouter extends Router {
     if (tarefa.id_colaborador !== id_pessoa) {
       const projeto = await ProjetoController.getProjetoByID(tarefa.id_projeto);
       if (!projeto || projeto.gerenciador !== id_pessoa) {
-        return res.status(403).json();
+        return res.status(403).json({ error: 'Acesso restringido' });
       }
     } else {
       req.body.id_colaborador = undefined;
@@ -168,7 +168,7 @@ export default class TarefaRouter extends Router {
     const projeto = await ProjetoController.getProjetoByID(tarefa.id_projeto);
 
     if (!projeto || projeto.gerenciador !== id_pessoa) {
-      return res.status(403).json();
+      return res.status(403).json({ error: 'Acesso restringido' });
     }
 
     const rows = await TarefaController.updateTarefa(
