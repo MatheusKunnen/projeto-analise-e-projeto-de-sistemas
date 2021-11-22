@@ -19,6 +19,7 @@ export default class TarefaController {
       .getDbInstance()
       .transaction();
     try {
+      if (typeof id_colaborador === 'undefined') id_colaborador = null;
       const ltarefa = await Tarefa.create(
         { id_projeto, nome, descricao, id_colaborador },
         { transaction }

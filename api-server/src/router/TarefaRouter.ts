@@ -63,7 +63,7 @@ export default class TarefaRouter extends Router {
       body.id_projeto,
       body.nome,
       body.descricao,
-      body.id_colaborador ? body.id_colaborador : null
+      body.id_colaborador
     );
 
     if (projeto === null)
