@@ -8,32 +8,32 @@ class ProjectService {
             nome: name,
             descricao: description
         });
-        return response.data;
+        return response.data.data;
     } catch (error) {
         console.log('Erro ao criar projeto', error);
-        return [];
+        throw(error)
     }
   }
 
-  async get(username:string, password:string, id: string) {
+  async get(username:string, password:string, id: number) {
     try {
         // Autenticação Basic - username, password.
         const response = await api.get(`/projeto/${id}`);
-        return response.data;
+        return response.data.data;
     } catch (error) {
         console.log('Erro ao obter projeto', error);
-        return [];
+        throw(error)
     }
   }
 
-  async add_collaborator(username:string, password:string, project_id: string, person_id: string) {
+  async add_collaborator(username:string, password:string, project_id: number, person_id: number) {
     try {
         // Autenticação Basic - username, password.
         const response = await api.put(`/projeto/${project_id}/add_colaborador/${person_id}`);
-        return response.data;
+        return response.data.data;
     } catch (error) {
         console.log('Erro ao adicionar colaborador', error);
-        return [];
+        throw(error)
     }
   }
 }

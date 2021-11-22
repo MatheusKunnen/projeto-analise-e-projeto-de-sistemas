@@ -13,7 +13,7 @@ class UserService {
         return response.data;
     } catch (error) {
         console.log('Erro ao cadastrar usuário', error);
-        return [];
+        throw(error)
     }
   }
 
@@ -25,10 +25,10 @@ class UserService {
             password
           }
         });
-        return response.data;
+        return response.data.data;
     } catch (error) {
         console.log('Erro ao fazer login', error);
-        return [];
+        throw(error)
     }
   }
 }

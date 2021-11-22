@@ -9,8 +9,9 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import { useNavigate } from "react-router-dom";
 
-import UserService from '../../services/UserService';
+import { useAuth } from '../../hooks/auth'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -34,19 +35,27 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignIn() {
   const classes = useStyles();
+  const { signIn } = useAuth();
+  const navigate = useNavigate();
 
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
 
   const onSubmit = useCallback(async (event) => {
     event.preventDefault();
-    console.log(username, password);
-    UserService.login(username, password)
+    signIn(username, password)
     .then(res => {
         console.log(res);
+        if(res)
+        {
+          navigate('/');
+        } else {
+          alert('Usuário ou senha incorretos');
+        }
     })
     .catch(err => {
         console.log(err);
+        alert('Erro ao fazer login');
     });
   }, [username, password]);
 

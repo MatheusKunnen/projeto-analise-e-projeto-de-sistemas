@@ -1,14 +1,14 @@
 import api from './api';
 
 class PersonService {
-  async get(username:string, password:string, person_id:string) {
+  async get(username:string, password:string, person_id:number) {
     try {
         // Autenticação Basic - username, password.
         const response = await api.get(`/pessoa/${person_id}`);
-        return response.data;
+        return response.data.data;
     } catch (error) {
         console.log('Erro ao obter pessoa', error);
-        return [];
+        throw(error)
     }
   }
 
@@ -16,10 +16,10 @@ class PersonService {
     try {
         // Autenticação Basic - username, password.
         const response = await api.get(`/pessoa`);
-        return response.data;
+        return response.data.data;
     } catch (error) {
-        console.log('Erro ao fazer login', error);
-        return [];
+        console.log('Erro ao obter pessoas', error);
+        throw(error)
     }
   }
 }
