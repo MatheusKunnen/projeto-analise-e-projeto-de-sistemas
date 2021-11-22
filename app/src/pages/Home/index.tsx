@@ -36,6 +36,15 @@ const Home: React.FC = () => {
   
   const onCreateProject = useCallback(async (event) => {
     event.preventDefault();
+    if(name.length < 1) {
+      alert('Insira um nome válido');
+      return;
+    }
+    else if(description.length < 1) {
+      alert('Descrição inválida');
+      return;
+    }
+
     ProjectService.create(name, description)
     .then(res => {
       const proj = projects;
@@ -47,7 +56,7 @@ const Home: React.FC = () => {
       alert('Projeto criado com sucesso');
     })
     .catch(err => {
-      alert('Erro ao criar projeto');
+      alert('Não foi possível salvar os dados');
       console.log(err);
     });
   }, [name, description, projects]);
@@ -93,12 +102,16 @@ const Home: React.FC = () => {
         </Button>
       </NewProjectContainer>
       <h1>Meus projetos</h1>
-      {projects.map(project => {
-        return(
-          // to-do: add project card
-          <Link to={`/projeto/${project.id_projeto}`} key={project.id_projeto}>{project.nome}, {project.descricao}</Link>
-        )
-      })}
+      {projects.length > 0 ?
+        projects.map(project => {
+          return(
+            // to-do: add project card
+            <Link to={`/projeto/${project.id_projeto}`} key={project.id_projeto}>{project.nome}, {project.descricao}</Link>
+          )
+        }) : (
+          <div>Não existe nenhum projeto associado</div>
+        )    
+    }
     </Container>
   );
 };

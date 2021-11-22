@@ -33,6 +33,7 @@ interface ProjectProps {
 
 const Home: React.FC = () => {
   const [project, setProject] = useState<ProjectProps>();
+  const [tasks, setTasks] = useState<TaskProps[]>([]);
   let { id } = useParams();
   const { user } = useAuth();
 
@@ -45,9 +46,21 @@ const Home: React.FC = () => {
     ProjectService.get(parseInt(id))
       .then(res => {
         setProject(res);
+        if(res.tarefas) {
+          if(user?.person_id === res.gerenciador) {
+            setTasks(res.tarefas);
+          }
+          else {
+            const tarefas = res.tarefas.filter((tarefa: TaskProps) => {
+              return tarefa.id_colaborador === user?.person_id;
+            })
+            setTasks(tarefas);
+          }
+        }
       })
       .catch(err => {
         console.log(err);
+        alert('Ocorreu um erro inesperado');
       })
   }
 
@@ -60,13 +73,17 @@ const Home: React.FC = () => {
         <h4>Você é o gerenciador</h4>
       }
       {/* to-do: Adicionar um card de tarefa */
-      project?.tarefas.map((tarefa) => {
-        return (
-          <div key={tarefa.id_tarefa}>
-            {tarefa.nome}: {tarefa.descricao}
-          </div>
-        );
-      })}
+        tasks.length > 0 ? 
+          tasks.map((tarefa) => {
+            return (
+              <div key={tarefa.id_tarefa}>
+                {tarefa.nome}: {tarefa.descricao} - {tarefa.id_colaborador}
+              </div>
+            );
+          }) : (
+            <div>Não existe nenhuma tarefa associada</div>
+          )
+      }
     </Container>
   );
 };
