@@ -9,6 +9,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import { useNavigate } from "react-router-dom";
 
 import UserService from '../../services/UserService';
 
@@ -34,6 +35,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignUp() {
   const classes = useStyles();
+  const navigate = useNavigate();
 
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
@@ -41,17 +43,50 @@ export default function SignUp() {
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
 
+  const validate = () => {
+    if(name.length < 1) {
+      alert('Nome inválido');
+      return false;
+    }
+    if(surname.length < 1) {
+      alert('Sobrenome inválido');
+      return false;
+    }
+    if(username.length < 1) {
+      alert('Alias inválido');
+      return false;
+    }
+    if(password.length < 6) {
+      alert('Senha muito curta');
+      return false;
+    }
+    if(password.length < 6) {
+      alert('Senha muito curta');
+      return false;
+    }
+    const splitEmail = email.split('@');
+    if(splitEmail.length !== 2) {
+      alert('Formato de email inválido');
+      return false;
+    }
+    if(splitEmail[1].split('.').length < 2) {
+      alert('Formato de email inválido');
+      return false;
+    }
+    return true;
+  }
+
   const onSubmit = useCallback((event) => {
     event.preventDefault();
+    validate() &&
     UserService.create(username, password, name, surname, email)
     .then(res => {
-        console.log(res);
+      navigate('/login');
     })
     .catch(err => {
-        console.log(err);
+      console.log(err);
+      alert('Não foi possível salvar os dados');
     });
-
-    console.log(name, email, password);
   }, [username, password, email, name, surname]);
 
   return (

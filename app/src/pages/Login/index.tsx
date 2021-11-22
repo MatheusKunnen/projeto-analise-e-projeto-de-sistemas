@@ -45,7 +45,6 @@ export default function SignIn() {
     event.preventDefault();
     signIn(username, password)
     .then(res => {
-        console.log(res);
         if(res)
         {
           navigate('/');
