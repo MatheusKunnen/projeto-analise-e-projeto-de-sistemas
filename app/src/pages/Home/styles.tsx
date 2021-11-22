@@ -8,11 +8,3 @@ export const Container = styled.div`
     color: var(--color-neutral-dark);
     margin-top: 2.5%;
 `;
-
-export const NewProjectContainer = styled.form`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    height: 55px;
-    width: 80%;
-`;

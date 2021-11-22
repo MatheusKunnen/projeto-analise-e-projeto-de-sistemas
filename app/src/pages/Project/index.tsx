@@ -31,7 +31,7 @@ interface ProjectProps {
   tarefas: TaskProps[];
 }
 
-const Home: React.FC = () => {
+const Project: React.FC = () => {
   const [project, setProject] = useState<ProjectProps>();
   const [tasks, setTasks] = useState<TaskProps[]>([]);
   let { id } = useParams();
@@ -69,8 +69,13 @@ const Home: React.FC = () => {
       <h1>{project?.nome}</h1>
       <h2>{project?.descricao}</h2>
 
-      {user?.person_id === project?.gerenciador && 
+      {user?.person_id === project?.gerenciador &&
+      <>
         <h4>Você é o gerenciador</h4>
+        <button>Adicionar colaboradores</button>
+        <button>Criar tarefas</button>
+        <button>Associar tarefas aos colaboradores</button>
+      </>
       }
       {/* to-do: Adicionar um card de tarefa */
         tasks.length > 0 ? 
@@ -88,4 +93,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default Project;
