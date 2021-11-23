@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Container } from './styles';
+import { Container, Title, Subtitle, CardContainer } from './styles';
 import {  Link } from "react-router-dom";
 import { useAuth } from '../../hooks/auth'
 import NewProject from './NewProject';
+import { Button, Card, CardContent, Typography, CardActions } from '@material-ui/core';
 
 import ProjectService from '../../services/ProjectService';
 
@@ -44,19 +45,46 @@ const Home: React.FC = () => {
   return (
     <Container>
       <NewProject open={createProjectModalOpen} setOpen={setCreateProjectModalOpen} onCreateProjectCallback={onCreateProject}/>
-      <h1>Meus projetos</h1>
-      {projects.length > 0 ?
-        projects.map(project => {
-          return(
-            // to-do: add project card
-            <Link to={`/projeto/${project.id_projeto}`} key={project.id_projeto}>{project.nome}, {project.descricao} - 
-            Você é {user?.person_id === project.gerenciador ? 'gerenciador' : 'colaborador'} desse projeto</Link>
-          )
-        }) : (
-          <div>Não existe nenhum projeto associado</div>
+      <Title>Projetos</Title>
+      <Subtitle style={{marginTop: 16, marginBottom: 16}}>Nessa área você pode visualizar todos os seus projetos</Subtitle>
+      <CardContainer>
+        {projects.length > 0 ?
+          projects.map(project => {
+            return(
+              // Deveria criar um ProjectCard com esse conteúdo
+                <Card variant="outlined" style={{ width: 300 }}>
+                  <CardContent>
+                    <Typography variant="h5" component="div">
+                      {project.nome}
+                    </Typography>
+                    <Typography >
+                      {project.descricao}
+                    </Typography>
+                    <Typography variant="body2" style={{ color: '#888888',  }}>
+                      Você é {user?.person_id === project.gerenciador ? 'gerenciador' : 'colaborador'} desse projeto
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Link to={`/projeto/${project.id_projeto}`} style={{textDecoration: 'none'}}>
+                      <Button style={{color: '#2545AA'}} size="small">Ver projeto</Button>
+                    </Link>
+                  </CardActions>
+                </Card>
+            )
+          }) : (
+            <div>Não existe nenhum projeto associado</div>
           )    
         }
-      <button onClick={handleOpenModal}>Criar novo projeto</button>
+      </CardContainer>
+      <Button
+        fullWidth
+        variant="contained"
+        color="primary"
+        style={{width: 300, marginTop: 32}}
+        onClick={handleOpenModal}
+      >
+        Criar novo projeto
+      </Button>
     </Container>
   );
 };

@@ -112,7 +112,7 @@ const Project: React.FC = () => {
             return (
               <div key={tarefa.id_tarefa} style={{display: 'flex', flexDirection: 'row', marginTop: 8, backgroundColor: '#DDDDDD'}}>
                 <div>{tarefa.nome}: {tarefa.descricao} - {tarefa.id_colaborador}</div>
-                {user?.person_id === project?.gerenciador &&
+                {user?.person_id === project?.gerenciador && !tarefa.id_colaborador &&
                   <button 
                   style={{marginLeft: 4}}
                   onClick={() => {
