@@ -11,21 +11,20 @@ export const Container = styled.div`
     position: absolute;
     top: 10%;
     left: 20%;
-    padding: 40px 0;
+    padding: 40px;
+    text-align: center;
 `;
 
-export const NewProjectContainer = styled.form`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    height: 55px;
-    width: 80%;
+export const FieldContainer = styled.form`
+    min-width: 300; 
+    margin-bottom: 16px;
 `;
 
 export const Title = styled.h1`
-    margin: 0;
+    margin-bottom: 24px;
 `;
 
 export const Subtitle = styled.h4`
     margin: 0;
+    margin-bottom: 16px;
 `;

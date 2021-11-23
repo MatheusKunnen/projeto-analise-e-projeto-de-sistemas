@@ -1,7 +1,7 @@
 import api from './api';
 
 class TaskService {
-  async create(name:string, description:string, project_id:number, collaborator_id:number) {
+  async create(name:string, description:string, project_id:number, collaborator_id:number | null) {
     try {
         const response = await api.post('/tarefa', {
             nome: name,
@@ -26,7 +26,7 @@ class TaskService {
     }
   }
 
-  async update(task_id:number, collaborator_id:string, done: boolean, note: string) {
+  async update(task_id:number, collaborator_id:number | null, done: boolean, note: string) {
     try {
         const response = await api.put(`/tarefa/${task_id}`, {
           observacao: note,

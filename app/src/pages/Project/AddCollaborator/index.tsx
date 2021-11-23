@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Title } from './styles';
+import { Container, Title, Subtitle } from './styles';
 import { Modal, Button, InputLabel, MenuItem, FormControl, Select } from '@material-ui/core';
 import PersonService from '../../../services/PersonService';
 import ProjectService from '../../../services/ProjectService';
@@ -30,7 +30,7 @@ const AddCollaborator: React.FC<AddCollaboratorProps> = ({open, setOpen, collabo
 
   const handleAddCollaborator = (event: any) => {
     event.preventDefault();
-    selected && ProjectService.add_collaborator(projectId, selected)
+    selected ? ProjectService.add_collaborator(projectId, selected)
       .then(res => {
         alert('Colaborador adicionado com sucesso!');
         callback();
@@ -40,6 +40,7 @@ const AddCollaborator: React.FC<AddCollaboratorProps> = ({open, setOpen, collabo
         console.log(err);
         alert('Não foi possível salvar os dados');
       })
+    : alert('Selecione uma pessoa da lista');
   };
 
   useEffect(() => {
@@ -61,13 +62,13 @@ const AddCollaborator: React.FC<AddCollaboratorProps> = ({open, setOpen, collabo
     >
       <Container>
         <Title>Adicionar colaborador</Title>
-        <h5>Atualmente esses são os colaboradores do seu projeto: </h5>
+        <Subtitle style={{marginTop: 8}}>Atualmente esses são os colaboradores do seu projeto: </Subtitle>
         {collaborators.map((collaborator: PersonProps) => {
           return (
-            <p>{collaborator.nome} {collaborator.sobrenome}</p>
+            <p style={{marginBottom: 0, marginTop: 16}}>{collaborator.nome} {collaborator.sobrenome}</p>
           );
         })}
-        <h5>Selecione o novo colaborador do projeto: </h5>
+        <Subtitle>Selecione o novo colaborador do projeto: </Subtitle>
         <FormControl variant="standard" style={{minWidth: 300, marginBottom: 24}} >
           <InputLabel id="demo-simple-select-standard-label">Colaborador</InputLabel>
           <Select
