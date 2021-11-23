@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Container } from './styles';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../hooks/auth'
-import AddCollaborator from './AddCollaborator';
+import AddCollaboratorToProject from './AddCollaboratorToProject';
+import AddCollaboratorToTask from './AddCollaboratorToTask';
 import CreateTask from './CreateTask';
 
 import ProjectService from '../../services/ProjectService';
@@ -36,8 +37,10 @@ interface ProjectProps {
 const Project: React.FC = () => {
   const [project, setProject] = useState<ProjectProps>();
   const [tasks, setTasks] = useState<TaskProps[]>([]);
+  const [selectedTask, setSelectedTask] = useState<number>();
 
-  const [addCollaboratorModalOpen, setAddCollaboratorModalOpen] = useState(false);
+  const [addCollaboratorToProjectModalOpen, setAddCollaboratorToProjectModalOpen] = useState(false);
+  const [addCollaboratorToTaskModalOpen, setAddCollaboratorToTaskModalOpen] = useState(false);
   const [createTaskModalOpen, setCreateTaskModalOpen] = useState(false);
 
   let { id } = useParams();
@@ -73,10 +76,17 @@ const Project: React.FC = () => {
 
   return (
     <Container>
-      <AddCollaborator 
-        open={addCollaboratorModalOpen} 
-        setOpen={setAddCollaboratorModalOpen} 
+      <AddCollaboratorToProject 
+        open={addCollaboratorToProjectModalOpen} 
+        setOpen={setAddCollaboratorToProjectModalOpen}
         projectId={project?.id_projeto ? project.id_projeto : -1}
+        collaborators={project?.colaboradores ? project?.colaboradores : []}
+        callback={updateProject}
+      />
+      <AddCollaboratorToTask
+        open={addCollaboratorToTaskModalOpen} 
+        setOpen={setAddCollaboratorToTaskModalOpen}
+        taskId={selectedTask? selectedTask : -1}
         collaborators={project?.colaboradores ? project?.colaboradores : []}
         callback={updateProject}
       />
@@ -92,18 +102,27 @@ const Project: React.FC = () => {
 
       {user?.person_id === project?.gerenciador &&
       <>
-        <h4>Você é o gerenciador</h4>
-        <button onClick={() => setAddCollaboratorModalOpen(true)}>Adicionar colaboradores</button>
+        <button onClick={() => setAddCollaboratorToProjectModalOpen(true)}>Adicionar colaboradores</button>
         <button onClick={() => setCreateTaskModalOpen(true)}>Criar tarefas</button>
-        <button>Associar tarefas aos colaboradores</button>
       </>
       }
       {/* to-do: Adicionar um card de tarefa */
         tasks.length > 0 ? 
           tasks.map((tarefa) => {
             return (
-              <div key={tarefa.id_tarefa}>
-                {tarefa.nome}: {tarefa.descricao} - {tarefa.id_colaborador}
+              <div key={tarefa.id_tarefa} style={{display: 'flex', flexDirection: 'row', marginTop: 8, backgroundColor: '#DDDDDD'}}>
+                <div>{tarefa.nome}: {tarefa.descricao} - {tarefa.id_colaborador}</div>
+                {user?.person_id === project?.gerenciador &&
+                  <button 
+                  style={{marginLeft: 4}}
+                  onClick={() => {
+                    setSelectedTask(tarefa.id_tarefa);
+                    setAddCollaboratorToTaskModalOpen(true);
+                  }}
+                  >
+                    +
+                  </button>
+                }
               </div>
             );
           }) : (

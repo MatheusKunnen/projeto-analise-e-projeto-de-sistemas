@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Title, Subtitle } from './styles';
 import { Modal, Button, InputLabel, MenuItem, FormControl, Select } from '@material-ui/core';
-import PersonService from '../../../services/PersonService';
-import ProjectService from '../../../services/ProjectService';
+import TaskService from '../../../services/TaskService';
 
 interface PersonProps {
   id_pessoa: number;
@@ -11,27 +10,30 @@ interface PersonProps {
   email: string;
 }
 
-interface AddCollaboratorProps {
+interface AddCollaboratorToProjectProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  projectId: number;
+  taskId: number;
   collaborators: PersonProps[];
   callback: () => void;
 }
 
-const AddCollaborator: React.FC<AddCollaboratorProps> = ({open, setOpen, collaborators, projectId, callback}) => {
-  const [selected, setSelected] = useState<number>();
-  const [filteredCollaborators, setFilteredCollaborators] = useState([]);
-  const handleClose = () => setOpen(false);
+const AddCollaboratorToProject: React.FC<AddCollaboratorToProjectProps> = ({open, setOpen, collaborators, taskId, callback}) => {
+  const [selectedCollaborator, setSelectedCollaborator] = useState<number | null>(null);
+  const handleClose = () => {
+    setSelectedCollaborator(null);
+    setOpen(false);
+  }
 
   const handleChange = (event: any) => {
-    setSelected(event.target.value);
+    setSelectedCollaborator(event.target.value);
   };
 
-  const handleAddCollaborator = (event: any) => {
+  const handleAddCollaboratorToProject = (event: any) => {
     event.preventDefault();
-    selected ? ProjectService.add_collaborator(projectId, selected)
+    selectedCollaborator ? TaskService.add_collaborator(taskId, selectedCollaborator)
       .then(res => {
+        console.log(res);
         alert('Colaborador adicionado com sucesso!');
         callback();
         handleClose();
@@ -43,18 +45,6 @@ const AddCollaborator: React.FC<AddCollaboratorProps> = ({open, setOpen, collabo
     : alert('Selecione uma pessoa da lista');
   };
 
-  useEffect(() => {
-    PersonService.all()
-      .then(res => {
-        const collaboratorsIds = collaborators.map((collab2: PersonProps) => collab2.id_pessoa);
-        const avaiableNewCollaborators = res.filter((collab: PersonProps) => !collaboratorsIds.includes(collab.id_pessoa));
-        setFilteredCollaborators(avaiableNewCollaborators);
-      })
-      .catch(err => {
-        console.log(err);
-      })
-  }, [collaborators, selected])
-
   return (
     <Modal
       open={open}
@@ -62,21 +52,15 @@ const AddCollaborator: React.FC<AddCollaboratorProps> = ({open, setOpen, collabo
     >
       <Container>
         <Title>Adicionar colaborador</Title>
-        <Subtitle style={{marginTop: 8}}>Atualmente esses são os colaboradores do seu projeto: </Subtitle>
-        {collaborators.map((collaborator: PersonProps) => {
-          return (
-            <p style={{marginBottom: 0, marginTop: 16}}>{collaborator.nome} {collaborator.sobrenome}</p>
-          );
-        })}
-        <Subtitle>Selecione o novo colaborador do projeto: </Subtitle>
+        <Subtitle>Selecione o colaborador da tarefa: </Subtitle>
         <FormControl variant="standard" style={{minWidth: 300, marginBottom: 24}} >
           <InputLabel id="demo-simple-select-standard-label">Colaborador</InputLabel>
           <Select
-            value={selected}
+            value={selectedCollaborator}
             onChange={handleChange}
             label="Colaborador"
           >
-            {filteredCollaborators.map((collaborator: PersonProps) => {
+            {collaborators.map((collaborator: PersonProps) => {
               return (
                 <MenuItem 
                   key={collaborator.id_pessoa} 
@@ -92,7 +76,7 @@ const AddCollaborator: React.FC<AddCollaboratorProps> = ({open, setOpen, collabo
           fullWidth
           variant="contained"
           color="primary"
-          onClick={handleAddCollaborator}
+          onClick={handleAddCollaboratorToProject}
           style={{height: 55, width: 300}}
           >
           Adicionar colaborador
@@ -102,4 +86,4 @@ const AddCollaborator: React.FC<AddCollaboratorProps> = ({open, setOpen, collabo
   );
 };
 
-export default AddCollaborator;
+export default AddCollaboratorToProject;

@@ -140,9 +140,6 @@ const CreateTask: React.FC<CreateTaskProps> = ({open, setOpen, collaborators, pr
             </Button>
           </div>
         </div>
-        
-
-        
       </Container>
     </Modal>
   );

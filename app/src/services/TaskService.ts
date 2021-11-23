@@ -39,6 +39,18 @@ class TaskService {
         throw(error)
     }
   }
+
+  async add_collaborator(task_id:number, collaborator_id:number) {
+    try {
+        const response = await api.put(`/tarefa/${task_id}`, {
+          id_colaborador: collaborator_id
+        });
+        return response.data.data;
+    } catch (error) {
+        console.log('Erro ao adicionar colaborador', error);
+        throw(error)
+    }
+  }
 }
 
 export default new TaskService();
