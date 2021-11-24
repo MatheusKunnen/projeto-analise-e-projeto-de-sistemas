@@ -104,7 +104,10 @@ const Task: React.FC<TaskComponentProps> = ({open, setOpen, task, callback, pers
                           alert('Não foi possível salvar os dados');
                         }
                       })
-                    // concluir tarefa
+                      .catch(err => {
+                        console.log(err);
+                        alert('Não foi possível salvar os dados');
+                      })
                   }
                 }}
               >
