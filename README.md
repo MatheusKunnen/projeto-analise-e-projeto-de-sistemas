@@ -18,7 +18,8 @@ CSG20 - Analise e Projeto de sistemas - 2021.02
 Para executar o projeto é necessário ter instalado:
 
 - Node.JS v14.X.X
-- NPM 7.17.X
+- NPM v7.17.X
+- YARN v1.22.X
 
 ## Backend
 
@@ -36,8 +37,8 @@ Para executar o projeto é necessário ter instalado:
 - Entrar na pasta "/app"
 - Instalar as dependências.
 
-      npm i
+      yarn install
 
 - Executar a aplicação no modo de desenvolvimento.
 
-      npm run start
+      yarn start
