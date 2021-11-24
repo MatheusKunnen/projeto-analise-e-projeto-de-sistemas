@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Container, Title, Subtitle } from './styles';
 import { Modal, Button, InputLabel, MenuItem, FormControl, Select } from '@material-ui/core';
 import TaskService from '../../../services/TaskService';

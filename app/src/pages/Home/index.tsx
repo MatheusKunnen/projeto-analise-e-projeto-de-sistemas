@@ -47,35 +47,38 @@ const Home: React.FC = () => {
       <NewProject open={createProjectModalOpen} setOpen={setCreateProjectModalOpen} onCreateProjectCallback={onCreateProject}/>
       <Title>Projetos</Title>
       <Subtitle style={{marginTop: 16, marginBottom: 16}}>Nessa área você pode visualizar todos os seus projetos</Subtitle>
-      <CardContainer>
-        {projects.length > 0 ?
-          projects.map(project => {
-            return(
-              // Deveria criar um ProjectCard com esse conteúdo
-                <Card variant="outlined" style={{ width: 300 }}>
-                  <CardContent>
-                    <Typography variant="h5" component="div">
-                      {project.nome}
-                    </Typography>
-                    <Typography >
-                      {project.descricao}
-                    </Typography>
-                    <Typography variant="body2" style={{ color: '#888888',  }}>
-                      Você é {user?.person_id === project.gerenciador ? 'gerenciador' : 'colaborador'} desse projeto
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Link to={`/projeto/${project.id_projeto}`} style={{textDecoration: 'none'}}>
-                      <Button style={{color: '#2545AA'}} size="small">Ver projeto</Button>
-                    </Link>
-                  </CardActions>
-                </Card>
-            )
-          }) : (
-            <div>Não existe nenhum projeto associado</div>
-          )    
+      
+        {projects.length > 0 ? 
+          (
+            <CardContainer>
+              {projects.map(project => {
+                  return(
+                    // Deveria criar um ProjectCard com esse conteúdo
+                      <Card variant="outlined" style={{ width: 300 }}>
+                        <CardContent>
+                          <Typography variant="h5" component="div">
+                            {project.nome}
+                          </Typography>
+                          <Typography >
+                            {project.descricao}
+                          </Typography>
+                          <Typography variant="body2" style={{ color: '#888888',  }}>
+                            Você é {user?.person_id === project.gerenciador ? 'gerenciador' : 'colaborador'} desse projeto
+                          </Typography>
+                        </CardContent>
+                        <CardActions>
+                          <Link to={`/projeto/${project.id_projeto}`} style={{textDecoration: 'none'}}>
+                            <Button style={{color: '#2545AA'}} size="small">Ver projeto</Button>
+                          </Link>
+                        </CardActions>
+                      </Card>
+                  )
+                })}
+            </CardContainer>
+          ) : (
+            <p style={{marginTop: 64, textAlign: 'center'}}>Não existe nenhum projeto associado</p>
+          )
         }
-      </CardContainer>
       <Button
         fullWidth
         variant="contained"

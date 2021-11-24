@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Container } from './styles';
+import { Container, Title, Subtitle, CardContainer, ButtonContainer } from './styles';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../hooks/auth'
 import AddCollaboratorToProject from './AddCollaboratorToProject';
 import AddCollaboratorToTask from './AddCollaboratorToTask';
 import CreateTask from './CreateTask';
+import { Button, Card, CardContent, Typography, CardActions } from '@material-ui/core';
 
 import ProjectService from '../../services/ProjectService';
 
@@ -97,37 +98,73 @@ const Project: React.FC = () => {
         collaborators={project?.colaboradores ? project?.colaboradores : []}
         callback={updateProject}
       />
-      <h1>{project?.nome}</h1>
-      <h2>{project?.descricao}</h2>
-
-      {user?.person_id === project?.gerenciador &&
-      <>
-        <button onClick={() => setAddCollaboratorToProjectModalOpen(true)}>Adicionar colaboradores</button>
-        <button onClick={() => setCreateTaskModalOpen(true)}>Criar tarefas</button>
-      </>
-      }
-      {/* to-do: Adicionar um card de tarefa */
-        tasks.length > 0 ? 
-          tasks.map((tarefa) => {
-            return (
-              <div key={tarefa.id_tarefa} style={{display: 'flex', flexDirection: 'row', marginTop: 8, backgroundColor: '#DDDDDD'}}>
-                <div>{tarefa.nome}: {tarefa.descricao} - {tarefa.id_colaborador}</div>
-                {user?.person_id === project?.gerenciador && !tarefa.id_colaborador &&
-                  <button 
-                  style={{marginLeft: 4}}
-                  onClick={() => {
-                    setSelectedTask(tarefa.id_tarefa);
-                    setAddCollaboratorToTaskModalOpen(true);
-                  }}
-                  >
-                    +
-                  </button>
-                }
-              </div>
-            );
-          }) : (
-            <div>Não existe nenhuma tarefa associada</div>
+      <Title>{project?.nome}</Title>
+      <Subtitle style={{marginTop: 32, marginBottom: 32}}>{project?.descricao}</Subtitle>
+      {
+          tasks.length > 0 ? (
+          <CardContainer>
+            {tasks.map((tarefa) => {
+              return (
+                // Deveria criar um TaskCard com esse conteúdo
+                <Card variant="outlined" style={{ width: 300, height: 'min-content' }}>
+                  <CardContent>
+                    {/* Poderia mostrar no máximo 2 linhas do título e da descrição, e cortar com ... o restante */}
+                    <Typography variant="h5" component="div">
+                      {tarefa.nome}
+                    </Typography>
+                    <Typography> 
+                      {tarefa.descricao}
+                    </Typography>
+                    <Typography variant="body2" style={{ color: '#888888'}}>
+                      {!tarefa.id_colaborador ? 
+                        'Essa tarefa ainda não foi atribuída a ninguém' : 
+                        `Tarefa atribuída ao colaborador ${tarefa.id_colaborador}`
+                      }
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                      <Button style={{color: '#2545AA'}} size="small">Ver tarefa</Button>
+                      {!tarefa.id_colaborador && 
+                        <Button 
+                        onClick={() => {
+                          setSelectedTask(tarefa.id_tarefa);
+                          setAddCollaboratorToTaskModalOpen(true);
+                        }}
+                        style={{color: '#2545AA'}} 
+                        size="small">
+                            Adicionar colaborador
+                        </Button>
+                      }
+                  </CardActions>
+                </Card>
+              );
+            })}
+          </CardContainer>
+          ): (
+            <p style={{marginTop: 64, textAlign: 'center'}}>Não existe nenhuma tarefa associada</p>
           )
+      }
+      {user?.person_id === project?.gerenciador &&
+      <ButtonContainer>
+        <Button
+          fullWidth
+          variant="contained"
+          color="primary"
+          style={{width: 300, marginTop: 16, marginRight: 16}}
+          onClick={() => setAddCollaboratorToProjectModalOpen(true)}
+        >
+          Adicionar colaboradores ao projeto
+        </Button>
+        <Button
+          fullWidth
+          variant="contained"
+          color="primary"
+          style={{width: 300, marginTop: 16}}
+          onClick={() => setCreateTaskModalOpen(true)}
+        >
+          Criar tarefas
+        </Button>
+      </ButtonContainer>
       }
     </Container>
   );

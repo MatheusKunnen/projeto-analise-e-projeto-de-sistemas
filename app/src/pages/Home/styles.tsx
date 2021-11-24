@@ -7,6 +7,7 @@ export const Container = styled.div`
     justify-content: center;
     color: var(--color-neutral-dark);
     margin-top: 2.5%;
+    padding-bottom: 64px;
 `;
 
 export const CardContainer = styled.div`
