@@ -5,9 +5,11 @@ import { useAuth } from '../../hooks/auth'
 import AddCollaboratorToProject from './AddCollaboratorToProject';
 import AddCollaboratorToTask from './AddCollaboratorToTask';
 import CreateTask from './CreateTask';
+import Task from './Task';
 import { Button, Card, CardContent, Typography, CardActions } from '@material-ui/core';
 
 import ProjectService from '../../services/ProjectService';
+import PersonService from '../../services/PersonService';
 
 interface PersonProps {
   id_pessoa: number;
@@ -38,28 +40,36 @@ interface ProjectProps {
 const Project: React.FC = () => {
   const [project, setProject] = useState<ProjectProps>();
   const [tasks, setTasks] = useState<TaskProps[]>([]);
-  const [selectedTask, setSelectedTask] = useState<number>();
+  const [persons, setPersons] = useState<PersonProps[]>([]);
+  const [selectedTask, setSelectedTask] = useState<TaskProps>({} as TaskProps);
 
   const [addCollaboratorToProjectModalOpen, setAddCollaboratorToProjectModalOpen] = useState(false);
   const [addCollaboratorToTaskModalOpen, setAddCollaboratorToTaskModalOpen] = useState(false);
   const [createTaskModalOpen, setCreateTaskModalOpen] = useState(false);
+  const [taskModalOpen, setTaskModalOpen] = useState(false);
 
   let { id } = useParams();
   const { user } = useAuth();
-
 
   useEffect(() => {
     user && updateProject();
   }, [user])
 
+  const getPessoa = (id_colaborador: number) => {
+    const person = persons.filter((person) => person.id_pessoa === id_colaborador)[0];
+    return person ? person.nome + ' ' + person.sobrenome : `colaborador ${id_colaborador}`
+  }
+
   const updateProject = () => {
     id &&
     ProjectService.get(parseInt(id))
-      .then(res => {
+      .then(async (res) => {
         setProject(res);
         if(res.tarefas) {
           if(user?.person_id === res.gerenciador) {
             setTasks(res.tarefas);
+            const allPerson = await PersonService.all();
+            setPersons(allPerson);
           }
           else {
             const tarefas = res.tarefas.filter((tarefa: TaskProps) => {
@@ -87,7 +97,7 @@ const Project: React.FC = () => {
       <AddCollaboratorToTask
         open={addCollaboratorToTaskModalOpen} 
         setOpen={setAddCollaboratorToTaskModalOpen}
-        taskId={selectedTask? selectedTask : -1}
+        taskId={selectedTask?.id_tarefa? selectedTask.id_tarefa : -1}
         collaborators={project?.colaboradores ? project?.colaboradores : []}
         callback={updateProject}
       />
@@ -98,6 +108,13 @@ const Project: React.FC = () => {
         collaborators={project?.colaboradores ? project?.colaboradores : []}
         callback={updateProject}
       />
+      <Task 
+        open={taskModalOpen}
+        setOpen={setTaskModalOpen}
+        task={selectedTask}
+        persons={persons}
+        callback={updateProject}
+      />
       <Title>{project?.nome}</Title>
       <Subtitle style={{marginTop: 32, marginBottom: 32}}>{project?.descricao}</Subtitle>
       {
@@ -106,7 +123,7 @@ const Project: React.FC = () => {
             {tasks.map((tarefa) => {
               return (
                 // Deveria criar um TaskCard com esse conteúdo
-                <Card variant="outlined" style={{ width: 300, height: 'min-content' }}>
+                <Card variant="outlined" style={{ width: 300, height: 'min-content', backgroundColor: tarefa.concluida ? '#DDFFDD' : '#FFFFFF' }}>
                   <CardContent>
                     {/* Poderia mostrar no máximo 2 linhas do título e da descrição, e cortar com ... o restante */}
                     <Typography variant="h5" component="div">
@@ -118,16 +135,27 @@ const Project: React.FC = () => {
                     <Typography variant="body2" style={{ color: '#888888'}}>
                       {!tarefa.id_colaborador ? 
                         'Essa tarefa ainda não foi atribuída a ninguém' : 
-                        `Tarefa atribuída ao colaborador ${tarefa.id_colaborador}`
+                          tarefa.id_colaborador === user?.person_id ?
+                          'Tarefa atribuída a você' :
+                          `Tarefa atribuída a ${getPessoa(tarefa.id_colaborador)}`
                       }
                     </Typography>
                   </CardContent>
                   <CardActions>
-                      <Button style={{color: '#2545AA'}} size="small">Ver tarefa</Button>
+                      <Button 
+                        style={{color: '#2545AA'}} 
+                        size="small"
+                        onClick={() => {
+                          setSelectedTask(tarefa);
+                          setTaskModalOpen(true);
+                        }}
+                      >
+                        Ver tarefa
+                      </Button>
                       {!tarefa.id_colaborador && 
                         <Button 
                         onClick={() => {
-                          setSelectedTask(tarefa.id_tarefa);
+                          setSelectedTask(tarefa);
                           setAddCollaboratorToTaskModalOpen(true);
                         }}
                         style={{color: '#2545AA'}} 
