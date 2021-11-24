@@ -12,11 +12,6 @@ export const Container = styled.div`
     padding: 40px;
 `;
 
-export const FieldContainer = styled.form`
-    min-width: 300; 
-    margin-bottom: 16px;
-`;
-
 export const Title = styled.h1`
     margin-bottom: 12px;
 `;

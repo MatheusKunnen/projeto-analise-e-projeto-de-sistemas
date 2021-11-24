@@ -63,6 +63,18 @@ class TaskService {
       throw(error)
     }
   }
+
+  async update_note(task_id:number, note: string) {
+    try {
+      const response = await api.put(`/tarefa/${task_id}`, {
+        observacao: note
+      });
+      return response.data.data;
+    } catch (error) {
+      console.log('Erro ao atualizar observação da tarefa', error);
+      throw(error)
+    }
+  }
 }
 
 export default new TaskService();
